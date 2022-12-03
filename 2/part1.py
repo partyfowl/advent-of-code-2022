@@ -1,1 +1,1 @@
-print(sum([j + ((j-i+1)%3*3) for i, j in [[(ord(j)-64) % 23 for j in i.split(' ')] for i in open('input.txt').read().strip().split('\n')]]))
+print(sum([j+((j-i+1)%3*3) for i, j in [[(ord(j)-64)%23 for j in i.split(' ')] for i in open('input.txt').read().strip().split('\n')]]))
