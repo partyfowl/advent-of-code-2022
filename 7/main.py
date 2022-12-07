@@ -19,14 +19,14 @@ class Dir(Node):
 
 
     def get_size_recursive_min_max_x(self, boundary_size: int, minimum: bool):
-        small_things = []
+        small_or_large_things = []
         for child in self.children:
             size = child.get_size_recursive()
             add_to_list = size >= boundary_size if minimum else size <= boundary_size
             if add_to_list:
-                small_things.append(size)
-            small_things.extend(child.get_size_recursive_min_max_x(boundary_size, minimum))
-        return small_things
+                small_or_large_things.append(size)
+            small_or_large_things.extend(child.get_size_recursive_min_max_x(boundary_size, minimum))
+        return small_or_large_things
 
 
 def main():
