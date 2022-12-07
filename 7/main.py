@@ -3,8 +3,13 @@ import re
 from anytree import Node
 
 
+CD_RE = re.compile(r'^\$ cd (.+)$')
+FILE_RE = re.compile(r'^(\d+) (.+)$')
+
+
 class Dir(Node):
     file_size: int = 0
+
 
     def get_size_recursive(self) -> int:
         total = self.file_size
@@ -12,26 +17,16 @@ class Dir(Node):
             total += child.get_size_recursive()
         return total
 
-    def get_size_recursive_max_x(self, max_size: int):
-        large_things = []
-        for child in self.children:
-            if (size := child.get_size_recursive()) <= max_size:
-                large_things.append(size)
-            large_things.extend(child.get_size_recursive_max_x(max_size))
-        return large_things
 
-    def get_size_recursive_min_x(self, min_size: int):
+    def get_size_recursive_min_max_x(self, boundary_size: int, minimum: bool):
         small_things = []
         for child in self.children:
-            if (size := child.get_size_recursive()) >= min_size:
+            size = child.get_size_recursive()
+            add_to_list = size >= boundary_size if minimum else size <= boundary_size
+            if add_to_list:
                 small_things.append(size)
-                small_things.extend(child.get_size_recursive_min_x(min_size))
+            small_things.extend(child.get_size_recursive_min_max_x(boundary_size, minimum))
         return small_things
-
-
-CD_RE = re.compile(r'^\$ cd (.+)$')
-DIR_RE = re.compile(r'^dir (.+)$')
-FILE_RE = re.compile(r'^(\d+) (.+)$')
 
 
 def main():
@@ -49,11 +44,17 @@ def main():
         elif match := FILE_RE.search(line):
             cwd.file_size += int(match.group(1))
 
-    available_space = 70000000 - root.get_size_recursive()
-    required_space = 30000000 - available_space
+    max_dir_size = 100000
 
-    print('Part 1:', sum(root.get_size_recursive_max_x(100000)))
-    print('Part 2:', sorted(root.get_size_recursive_min_x(required_space))[0])
+    print('Part 1:', sum(root.get_size_recursive_min_max_x(max_dir_size, False)))
+
+    total_disk_size = 70000000
+    update_size = 30000000
+
+    available_space = total_disk_size - root.get_size_recursive()
+    required_space = update_size - available_space
+
+    print('Part 2:', sorted(root.get_size_recursive_min_max_x(required_space, True))[0])
 
 
 if __name__ == '__main__':
