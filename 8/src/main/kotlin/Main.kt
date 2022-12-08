@@ -33,16 +33,16 @@ class Tree(forest: Forest, x: Int, y: Int) {
 
     init {
         // NORTH
-        checkSlice(forest.columns[x].slice((y-1 downTo 0)))
+        checkSlice(forest.columns[x].reversed().takeLast(y))
 
         // SOUTH
-        checkSlice(forest.columns[x].slice((y+1 until forest.columns[x].size)))
+        checkSlice(forest.columns[x].drop(y+1))
 
         // WEST
-        checkSlice(forest.rows[y].slice((x-1 downTo 0)))
+        checkSlice(forest.rows[y].reversed().takeLast(x))
 
         // EAST
-        checkSlice(forest.rows[y].slice((x+1 until forest.rows[x].size)))
+        checkSlice(forest.rows[y].drop(x+1))
     }
 }
 
