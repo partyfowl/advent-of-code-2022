@@ -2,24 +2,18 @@ import yaml
 
 
 def process_operation(old: int, operation: str):
-    # filthy
-    return eval(operation)
+    a, op, b = operation.split()
+    a = old if a == 'old' else int(a)
+    b = old if b == 'old' else int(b)
 
-
-def get_primes(max: int=100):
-    primes = set()
-    for num in range(2,max):
-        prime = True
-        for i in range(2,num):
-            if (num%i==0):
-                prime = False
-        if prime:
-            primes.add(num)
-    return primes
+    if op == '+':
+        return a + b
+    elif op == '*':
+        return a * b
 
 
 def do_part(part: int):
-    with open('test.txt') as f:
+    with open('input.txt') as f:
         monkey_yamls = f.read().replace('  ', '').strip().split('\n\n')
 
     # Transforms this into something usable
@@ -38,7 +32,6 @@ def do_part(part: int):
         mod *= monkey['test_divisible_by']
 
     for _ in range(20 if part == 1 else 10000):
-        print(_)
         for monkey in monkeys:
             while monkey['items']:
                 monkey['items_inspected'] += 1
